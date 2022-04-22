@@ -1,0 +1,8 @@
+#jupyter checkpoints
+**/.ipynb_checkpoints/
+
+# VSCODE IDE
+.vscode
+
+#Pycharm IDE
+.idea
