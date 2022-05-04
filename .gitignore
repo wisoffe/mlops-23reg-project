@@ -6,3 +6,6 @@
 
 #Pycharm IDE
 .idea
+
+#venv
+.venv
