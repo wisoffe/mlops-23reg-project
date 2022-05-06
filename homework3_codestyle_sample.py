@@ -9,14 +9,16 @@ import random
 # Imports from
 from typing import Tuple
 from haversine import Unit
-from sklearn.model_selection import GroupKFold  # noqa: F401 # pylint: disable=unused-import
-from fuzzywuzzy import fuzz
+
+# pylint: disable-next=unused-import
+from sklearn.model_selection import GroupKFold  # type: ignore # noqa: F401
+from fuzzywuzzy import fuzz  # type: ignore
 from xgboost import XGBClassifier  # noqa: F401 # pylint: disable=unused-import
 
 # Imports as
 import numpy as np
-import pandas as pd
-import haversine as hs
+import pandas as pd  # type: ignore
+import haversine as hs  # type: ignore
 
 
 # Fix all random seeds
