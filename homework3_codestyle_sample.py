@@ -1,5 +1,6 @@
 """
     Sample module, only for MLOps homework3
+    For test CI merge request
 """
 
 # Imports
