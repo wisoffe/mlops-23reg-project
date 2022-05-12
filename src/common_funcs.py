@@ -148,44 +148,16 @@ def get_submission_true(df_original: pd.DataFrame) -> pd.DataFrame:
     ]
 
 
-def get_pairs_metrics(
-    df_original: pd.DataFrame,
-    df_pairs: pd.DataFrame,
-    labels_true: np.ndarray,
-    pairs_drop_orders_dublicates=False,
-) -> dict:
-    """Вычисляем набор метрик для датасета пар-кандидатов, это необходимо в первую очередь,
-    для целей оценки качества нашей методики отбора кандидатов. Т.е. наш конечный
-    результат зависит высокоуровнего от 2-х подзадач, а именно: задача выбора кандидатов на
-    сравнение, задача бинарной классификации выбранных пар на дублирование
-    (1 - дубль, 0 - не дубль).
-
-    Смысл в том, что каких бы самых лучших фичей мы не нагенерировали для наших пар (уже
-    сформированных) и какая бы наилучшая модель у нас не была, мы не сможем получить высокий
-    итоговый скор, если у нас в парах (попарном сравнении) недостаточно реальных дубликатов.
-
-    Подробное описание возвращаемых метрик (в текущей реализации функции) приведено в Returns.
+def get_match_label(dataset: pd.DataFrame) -> pd.Series:
+    """Получаем Series из целевых переменных (label/target) для бинарной классификации,
+    где 1 - являются дубликатами (match), 0 - не являются (not match)
 
     Args:
-        df_original (pd.DataFrame): Исходный датасет (формата train), необходим, т.к. в парный
-            попадают не все id
-        df_pairs (pd.DataFrame): датасет наших пар-кандидатов на сравнение
-        labels_true (np.ndarray): массив из 1 и 0, метки, полученные на основе реальной колонки
-        "point_of_interest"
+        dataset (pd.DataFrame): Парный датасет в котором присутсвуют колонки:
+            point_of_interest_1, point_of_interest_2
 
     Returns:
-        dict: Возвращаем словарь метрик, на текущий момент подсчитываются:
-            {
-                "Jaccard (max)": Максимально возможный Jaccard скор (основная метрика
-                соревнования), который можно получить из текущих выбранных кандидатов. Т.е.
-                Если наша модель, справится с бинарной классификацией на 100%
-            }
+        pd.Series: серия из 1 или 0, ниши целевые переменные (индексы соответсувуют переданному
+        парному датасету)
     """
-    metrics = {}
-    submission_true = get_submission_true(df_original)
-    submission_pairs_max_true = get_submission_predict(
-        df_original, df_pairs, labels_true, pairs_drop_orders_dublicates
-    )
-    metrics["Jaccard (max)"] = jaccard_score(submission_true, submission_pairs_max_true)
-
-    return metrics
+    return (dataset["point_of_interest_1"] == dataset["point_of_interest_2"]).astype(int)

@@ -7,7 +7,7 @@ import click
 import pandas as pd
 
 
-def df_train_test_group_split(
+def train_test_group_split_df(
     dataset: pd.DataFrame,
     n_splits=3,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -47,7 +47,7 @@ def df_train_test_group_split(
 @click.argument("output_split_train_path", type=click.Path())
 @click.argument("output_split_test_path", type=click.Path())
 @click.option("--n_splits", default=3, type=click.INT)
-def csv_train_test_group_split(
+def train_test_group_split_csv(
     input_raw_train_path: str,
     output_split_train_path: str,
     output_split_test_path: str,
@@ -67,11 +67,11 @@ def csv_train_test_group_split(
 
     raw_train = pd.read_csv(input_raw_train_path)
 
-    split_train, split_test = df_train_test_group_split(raw_train, n_splits=n_splits)
+    split_train, split_test = train_test_group_split_df(raw_train, n_splits=n_splits)
 
     split_train.to_csv(output_split_train_path, index=False)
     split_test.to_csv(output_split_test_path, index=False)
 
 
 if __name__ == "__main__":
-    csv_train_test_group_split()  # pylint: disable=E1120
+    train_test_group_split_csv()  # pylint: disable=E1120
