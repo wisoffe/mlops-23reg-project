@@ -1,9 +1,12 @@
 """Module for build features"""
 
-from typing import Tuple
+
 import pandas as pd
-import numpy as np
+import haversine as hs
 import click
+from haversine import Unit
+from fuzzywuzzy import fuzz
+from src.common_funcs import get_match_label
 
 
 def run_futures_pipeline(
@@ -109,11 +112,25 @@ def add_feauture_levenshtein_distance(
     return df_feautures
 
 
-def build_futures_df(df_pairs: pd.DataFrame, add_target_label: bool) -> pd.DataFrame:
-    ## Формирование датасета, подходящего для передачи в модель
+def build_pair_feautures_df(df_pairs: pd.DataFrame, add_target_label: bool) -> pd.DataFrame:
+    """Формирование датасета, содержащего все необходимые фичи, и готового для передачи в модель.
+
+    Args:
+        df_pairs (pd.DataFrame): Исходный датафрейм пар-кандидатов
+        add_target_label (bool): Необходимо ли генерировать целевую переменную.
+            Для ее генерации исходный датафрейм должен содержать колонки
+            ["point_of_interest_1", "point_of_interest_2"]
+
+    Returns:
+        pd.DataFrame: Выходной датафрейм следующего формата:
+            - колонки "id_1", "id_2"
+            - колонка "target_label" (если add_target_label == True)
+            - колонки сгенерированных фичей, все они имеют префикс "ftr_"
+
+    """
 
     # Задаем пайплайн из функций по генерации фичей
-    # (описание формата в docstring run_futures_pipeline)
+    # (более подробное описание в docstring run_futures_pipeline)
     pairs_futures_pipeline = [
         {"func": add_feauture_geo_distance, "params": {}},
         {"func": add_feauture_levenshtein_distance, "params": {}},
@@ -122,5 +139,43 @@ def build_futures_df(df_pairs: pd.DataFrame, add_target_label: bool) -> pd.DataF
     # Генерируем фичи
     df_feautures = run_futures_pipeline(df_pairs, pairs_futures_pipeline)
 
+    list_df_pairs_result_columns = ["id_1", "id_2"]
+
     if add_target_label:
-        pairs_train
+        df_pairs["target_label"] = get_match_label(df_pairs)
+        list_df_pairs_result_columns.append("target_label")
+
+    return pd.concat(
+        [df_pairs[list_df_pairs_result_columns], df_feautures], axis=1, ignore_index=False
+    )
+
+
+@click.command()
+@click.argument("input_pairs_dataset_path", type=click.Path(exists=True))
+@click.argument("output_pair_feautures_dataset_path", type=click.Path())
+@click.argument("add_target_label", type=click.BOOL)
+def build_pair_feautures_csv(
+    input_pairs_dataset_path: str, output_pair_feautures_dataset_path: str, add_target_label: bool
+) -> None:
+    """Формирование датасета, содержащего все необходимые фичи, и готового для передачи в модель.
+
+    Args:
+        input_pairs_dataset_path (str): Путь к csv файлу исходного датасета пар-кандидатов
+        output_pair_feautures_dataset_path (str): Путь до выходного csv файла (файл считается
+            готовым для передачи в модель и должен располагаться в директории data/processed).
+            Формат файла описан в docstring функции build_pair_feautures_df (в Returns:)
+        add_target_label (bool): Необходимо ли генерировать целевую переменную.
+            Требования к датасету, в случае генерации, описаны функции build_pair_feautures_df
+    """
+
+    df_pairs = pd.read_csv(input_pairs_dataset_path)
+
+    df_pair_feautures = build_pair_feautures_df(df_pairs, add_target_label=add_target_label)
+
+    del df_pairs
+
+    df_pair_feautures.to_csv(output_pair_feautures_dataset_path, index=False)
+
+
+if __name__ == "__main__":
+    build_pair_feautures_csv()  # pylint: disable=E1120
