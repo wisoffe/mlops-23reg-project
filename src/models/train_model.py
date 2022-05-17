@@ -7,8 +7,8 @@ import joblib
 
 
 @click.command()
-@click.argument("output_model_path", type=click.Path(exists=True))
-@click.option("--pair_feautures_dataset_path", default=None, type=click.Path())
+@click.argument("output_model_path", type=click.Path())
+@click.option("--pair_feautures_dataset_path", default=None, type=click.Path(exists=True))
 @click.option("--pair_feautures_df", default=None)
 def train_model(
     output_model_path: str,
@@ -35,14 +35,15 @@ def train_model(
     if pair_feautures_dataset_path is not None:
         pair_feautures_df = pd.read_csv(pair_feautures_dataset_path)
 
-    ## Формируем X, y для дальнейшей передачи в модель
-
-    y_true = pair_feautures_df["target_label"]
+    # Формируем X, y для дальнейшей передачи в модель
+    y_true = pair_feautures_df["target_label"]  # type: ignore
 
     # Все колонки фичей начинаются с 'ftr_'
-    columns_to_remove = [col for col in pair_feautures_df.columns if not col.startswith("ftr_")]
+    columns_to_remove = [
+        col for col in pair_feautures_df.columns if not col.startswith("ftr_")  # type: ignore
+    ]
     # Для экономии памяти (исключения возможности дублирования) используем inplace
-    pair_feautures_df.drop(columns=[columns_to_remove], inplace=True)
+    pair_feautures_df.drop(columns=columns_to_remove, inplace=True)  # type: ignore
     X_features = pair_feautures_df  # pylint: disable=C0103
 
     # Model params
