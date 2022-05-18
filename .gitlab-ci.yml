@@ -31,7 +31,7 @@ before_script:
 
 test_lint:
   script:
-    - flake8 homework3_codestyle_sample.py
-    - mypy homework3_codestyle_sample.py
-    - bandit homework3_codestyle_sample.py
-    - pylint homework3_codestyle_sample.py
+    - flake8 src
+    - mypy --ignore-missing-imports src
+    - bandit src
+    - pylint src
