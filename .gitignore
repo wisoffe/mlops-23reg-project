@@ -79,7 +79,19 @@ target/
 **/.ipynb_checkpoints/
 
 # exclude data from source control by default
-/data/
+data/*
+!data/external/
+!data/interim/
+!data/processed/
+!data/raw/
+data/external/*
+!data/external/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/raw/*
+!data/raw/.gitkeep
 
 # Mac OS-specific storage files
 .DS_Store
