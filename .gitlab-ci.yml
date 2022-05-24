@@ -21,17 +21,18 @@ variables:
 cache:
   paths:
     - .cache/pip
-    - venv/
+    - .venv
 
 before_script:
   - python --version  # For debugging
-  - python -m venv .venv
-  - Invoke-Expression(".venv/Scripts/Activate.ps1")
-  - pip install -r requirements_freeze.txt
+  - pip install --upgrade pip
+  - pip install poetry
+  - poetry config settings.virtualenvs.in-project true
+  - poetry install
 
 test_lint:
   script:
-    - flake8 src
-    - mypy --ignore-missing-imports src
-    - bandit src
-    - pylint src
+    - poetry run flake8 src
+    - poetry run mypy --ignore-missing-imports src
+    - poetry run bandit src
+    - poetry run pylint src
