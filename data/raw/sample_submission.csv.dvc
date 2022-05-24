@@ -1,0 +1,4 @@
+outs:
+- md5: 88245db2dfe8a78302402b9b15865d27
+  size: 215
+  path: sample_submission.csv
