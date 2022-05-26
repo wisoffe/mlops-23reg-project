@@ -70,7 +70,8 @@ stages:
       - .\data\processed\split_test_pair_feautures.csv
       - .\src\models\predict_model.py
     outs:
-      - .\data\processed\submission_pred_split.csv
+      - .\data\processed\submission_pred_split.csv:
+          cache: false
 
 
   evaluate:
