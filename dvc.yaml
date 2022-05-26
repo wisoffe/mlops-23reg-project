@@ -16,7 +16,8 @@ stages:
       - .\data\interim\split_train.csv
       - .\src\data\generate_pairs.py
     outs:
-      - .\data\interim\split_train_pairs.csv
+      - .\data\interim\split_train_pairs.csv:
+          cache: false
     metrics:
       - .\reports\metrics_of_split_train_pairs.json:
           cache: false
@@ -28,7 +29,8 @@ stages:
       - .\data\interim\split_train_pairs.csv
       - .\src\features\build_pair_features.py
     outs:
-      - .\data\processed\split_train_pair_feautures.csv
+      - .\data\processed\split_train_pair_feautures.csv:
+          cache: false
 
 
   train_model:
@@ -46,7 +48,8 @@ stages:
       - .\data\interim\split_test.csv
       - .\src\data\generate_pairs.py
     outs:
-      - .\data\interim\split_test_pairs.csv
+      - .\data\interim\split_test_pairs.csv:
+          cache: false
     metrics:
       - .\reports\metrics_of_split_test_pairs.json:
           cache: false
@@ -58,7 +61,8 @@ stages:
       - .\data\interim\split_test_pairs.csv
       - .\src\features\build_pair_features.py
     outs:
-      - .\data\processed\split_test_pair_feautures.csv
+      - .\data\processed\split_test_pair_feautures.csv:
+          cache: false
 
 
   predict_model:
