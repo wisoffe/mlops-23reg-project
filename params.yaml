@@ -1,0 +1,2 @@
+train_test_split:
+  n_splits: 3

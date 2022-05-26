@@ -1,0 +1,5 @@
+[core]
+    remote = s3yandex
+['remote "s3yandex"']
+    url = s3://mlops23regs3yandex
+    endpointurl = https://storage.yandexcloud.net

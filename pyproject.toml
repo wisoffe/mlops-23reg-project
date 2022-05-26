@@ -18,6 +18,7 @@ haversine = "2.5.1"
 sklearn = "0.0"
 fuzzywuzzy = "0.18.0"
 xgboost = "1.6.0"
+dvc = {extras = ["s3"], version = "^2.10.2"}
 
 [tool.poetry.dev-dependencies]
 black = "22.3.0"
