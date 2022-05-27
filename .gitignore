@@ -64,6 +64,7 @@ target/
 
 # Database
 *.db
+!mlflow.db
 *.rdb
 
 # Pycharm
