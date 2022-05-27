@@ -7,6 +7,10 @@ from src.common_funcs import (
     get_submission_true,
     jaccard_score,
 )
+import mlflow
+
+mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_experiment("test_mlflow")
 
 
 @click.command()
@@ -36,12 +40,14 @@ def evaluate(
     submission_pred = pd.read_csv(input_submission_pred_path)
 
     metrics = {}
-    metrics["Jaccard (final)"] = jaccard_score(submission_true, submission_pred)
+    metrics["Jaccard_final"] = jaccard_score(submission_true, submission_pred)
 
     with open(output_metrics_path, "w", encoding="UTF-8") as metrics_file:
         json.dump(metrics, metrics_file)
 
     print(metrics)
+
+    mlflow.log_metrics(metrics)
 
 
 if __name__ == "__main__":

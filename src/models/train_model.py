@@ -4,6 +4,10 @@ import pandas as pd
 import click
 from xgboost import XGBClassifier
 import joblib
+import mlflow
+
+mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_experiment("test_mlflow")
 
 
 @click.command()
@@ -49,6 +53,9 @@ def train_model(
     # Model params
     model_params = {"random_state": 42, "n_estimators": 10, "verbosity": 0}
 
+    # Log model params
+    mlflow.log_params(model_params)
+
     # Define the model
     model = XGBClassifier(**model_params)
 
@@ -56,6 +63,11 @@ def train_model(
     model.fit(X_features, y_true)
 
     joblib.dump(model, output_model_path)
+
+    # Mlflow log model
+    mlflow.xgboost.log_model(
+        model, artifact_path="output_model_path", registered_model_name="my_baseline_xboost"
+    )
 
 
 if __name__ == "__main__":

@@ -12,10 +12,14 @@ from src.common_funcs import (
     jaccard_score,
     get_match_label,
 )
+import mlflow
 
+mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_experiment("test_mlflow")
 
 # Hyperparameters
 PAIRS_DROP_ORDER_DUBLICATES = True
+mlflow.log_param("PAIRS_DROP_ORDER_DUBLICATES", PAIRS_DROP_ORDER_DUBLICATES)
 
 
 def get_pairs_metrics(
@@ -56,7 +60,7 @@ def get_pairs_metrics(
     submission_pairs_max_true = get_submission_predict(
         df_original, df_pairs, labels_true, pairs_drop_orders_dublicates
     )
-    metrics["Jaccard (max)"] = jaccard_score(submission_true, submission_pairs_max_true)
+    metrics["Jaccard_max"] = jaccard_score(submission_true, submission_pairs_max_true)
 
     return metrics
 
@@ -116,6 +120,7 @@ def generate_pairs_df(
     # По сути это гиперпараметр, но не вынесен в таковые, т.к. это временное baseline решение
     # pylint: disable-next=invalid-name)
     FIRST_COORD_ROUND = 3  # (2) сотые ~= 1 км, (3) тысячные ~= 0.1 км
+    mlflow.log_param("FIRST_COORD_ROUND", FIRST_COORD_ROUND)
 
     # task: Устранить SettingWithCopyWarning
 
@@ -193,6 +198,8 @@ def generate_pairs_csv(
         with open(output_pairs_metrics_path, "w", encoding="UTF-8") as metrics_file:
             json.dump(metrics_of_pairs, metrics_file)
         print(metrics_of_pairs)
+
+        mlflow.log_metrics(metrics_of_pairs)
 
 
 if __name__ == "__main__":
