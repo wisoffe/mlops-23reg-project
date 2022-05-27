@@ -25,15 +25,15 @@ stages:
       md5: 50727d57cff70b4dd48a553e8c25de16
       size: 119179504
     - path: .\src\data\generate_pairs.py
-      md5: bea629a5e9a53a7e62c5d0175ef60b77
-      size: 11193
+      md5: 1d492abaacda4e124634a937184895c1
+      size: 11482
     outs:
     - path: .\data\interim\split_train_pairs.csv
       md5: 7a666084ec0c102d0eeab69136e971af
       size: 307252931
     - path: .\reports\metrics_of_split_train_pairs.json
-      md5: bd103cded5a67996a31577444e119dea
-      size: 36
+      md5: 81cd26cad6e57a7bac3ec1aaf2594553
+      size: 34
   build_pair_features_train:
     cmd: python .\src\features\build_pair_features.py .\data\interim\split_train_pairs.csv
       .\data\processed\split_train_pair_feautures.csv true
@@ -56,8 +56,8 @@ stages:
       md5: 6a16aca6154d57f160cfd261825b6354
       size: 60372091
     - path: .\src\models\train_model.py
-      md5: 045781e99497dda202892069f0bff5b7
-      size: 3015
+      md5: 0a6dd91abfb7664410442e192d0a79dc
+      size: 3341
     outs:
     - path: .\models\model_on_split_df.pkl
       md5: ec982c566414065ddec03ffe44c7a538
@@ -70,15 +70,15 @@ stages:
       md5: 2dcffbecf1cfb1b5243579aa3dddf953
       size: 59640605
     - path: .\src\data\generate_pairs.py
-      md5: bea629a5e9a53a7e62c5d0175ef60b77
-      size: 11193
+      md5: 1d492abaacda4e124634a937184895c1
+      size: 11482
     outs:
     - path: .\data\interim\split_test_pairs.csv
       md5: a93351bec3bb318d14ac72c0c02e2be1
       size: 94366542
     - path: .\reports\metrics_of_split_test_pairs.json
-      md5: 65b7d9db81d6d78091e8ac562e83418c
-      size: 37
+      md5: f1be44f87bed37a615fbb1abb21716dd
+      size: 35
   build_pair_features_test:
     cmd: python .\src\features\build_pair_features.py .\data\interim\split_test_pairs.csv
       .\data\processed\split_test_pair_feautures.csv true
@@ -124,9 +124,9 @@ stages:
       md5: 1fe1454430e086b9d6ea1d3f88faff9c
       size: 14217616
     - path: .\src\models\evaluate.py
-      md5: 8f66bfdb08d984a4990197db48d9e9d6
-      size: 2210
+      md5: d05312db460799d55a0b808cc6a96514
+      size: 2348
     outs:
     - path: .\reports\metrics_of_split_test_final.json
-      md5: 310ceabdbbe4f15525a3f50bee8e8d74
-      size: 39
+      md5: 35120f579369601b346d6ad0f69f9321
+      size: 37
