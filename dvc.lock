@@ -56,8 +56,8 @@ stages:
       md5: 6a16aca6154d57f160cfd261825b6354
       size: 60372091
     - path: .\src\models\train_model.py
-      md5: 0a6dd91abfb7664410442e192d0a79dc
-      size: 3341
+      md5: 858d2b1a2d68a25983fb689888872ce7
+      size: 3562
     outs:
     - path: .\models\model_on_split_df.pkl
       md5: ec982c566414065ddec03ffe44c7a538
@@ -124,7 +124,7 @@ stages:
       md5: 1fe1454430e086b9d6ea1d3f88faff9c
       size: 14217616
     - path: .\src\models\evaluate.py
-      md5: d05312db460799d55a0b808cc6a96514
+      md5: 638f618bf42fbc4775521c9c4c4d466f
       size: 2348
     outs:
     - path: .\reports\metrics_of_split_test_final.json

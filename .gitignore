@@ -92,6 +92,10 @@ data/interim/*
 data/processed/*
 !data/processed/.gitkeep
 
+# Docker
+Docker/minio/
+Docker/pgadmin/
+
 # Mac OS-specific storage files
 .DS_Store
 

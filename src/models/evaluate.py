@@ -3,14 +3,15 @@
 import json
 import click
 import pandas as pd
+import mlflow
 from src.common_funcs import (
     get_submission_true,
     jaccard_score,
 )
-import mlflow
+from src.common_funcs import mlflow_set_tracking_config
 
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
-mlflow.set_experiment("test_mlflow")
+
+mlflow_set_tracking_config("general_model")
 
 
 @click.command()

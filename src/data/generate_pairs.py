@@ -6,16 +6,18 @@ import json
 import pandas as pd
 import numpy as np
 import click
+import mlflow
 from src.common_funcs import (
     get_submission_true,
     get_submission_predict,
     jaccard_score,
     get_match_label,
 )
-import mlflow
+from src.common_funcs import mlflow_set_tracking_config
 
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
-mlflow.set_experiment("test_mlflow")
+
+mlflow_set_tracking_config("generate_pairs")
+
 
 # Hyperparameters
 PAIRS_DROP_ORDER_DUBLICATES = True

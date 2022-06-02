@@ -5,9 +5,10 @@ import click
 from xgboost import XGBClassifier
 import joblib
 import mlflow
+from src.common_funcs import mlflow_set_tracking_config
 
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
-mlflow.set_experiment("test_mlflow")
+
+mlflow_set_tracking_config("docker_mlflow")
 
 
 @click.command()
@@ -35,39 +36,43 @@ def train_model(
         pair_feautures_df (pd.DataFrame, optional): Датасет пар-кандидатов типа pd.DataFrame
             (используется, если pair_feautures_dataset_path не задан). Defaults to None.
     """
+    with mlflow.start_run():
 
-    if pair_feautures_dataset_path is not None:
-        pair_feautures_df = pd.read_csv(pair_feautures_dataset_path)
+        mlflow.get_artifact_uri()
+        print(mlflow.get_artifact_uri())
 
-    # Формируем X, y для дальнейшей передачи в модель
-    y_true = pair_feautures_df["target_label"]  # type: ignore
+        if pair_feautures_dataset_path is not None:
+            pair_feautures_df = pd.read_csv(pair_feautures_dataset_path)
 
-    # Все колонки фичей начинаются с 'ftr_'
-    columns_to_remove = [
-        col for col in pair_feautures_df.columns if not col.startswith("ftr_")  # type: ignore
-    ]
-    # Для экономии памяти (исключения возможности дублирования) используем inplace
-    pair_feautures_df.drop(columns=columns_to_remove, inplace=True)  # type: ignore
-    X_features = pair_feautures_df  # pylint: disable=C0103
+        # Формируем X, y для дальнейшей передачи в модель
+        y_true = pair_feautures_df["target_label"]  # type: ignore
 
-    # Model params
-    model_params = {"random_state": 42, "n_estimators": 10, "verbosity": 0}
+        # Все колонки фичей начинаются с 'ftr_'
+        columns_to_remove = [
+            col for col in pair_feautures_df.columns if not col.startswith("ftr_")  # type: ignore
+        ]
+        # Для экономии памяти (исключения возможности дублирования) используем inplace
+        pair_feautures_df.drop(columns=columns_to_remove, inplace=True)  # type: ignore
+        X_features = pair_feautures_df  # pylint: disable=C0103
 
-    # Log model params
-    mlflow.log_params(model_params)
+        # Model params
+        model_params = {"random_state": 42, "n_estimators": 10, "verbosity": 0}
 
-    # Define the model
-    model = XGBClassifier(**model_params)
+        # Log model params
+        mlflow.log_params(model_params)
 
-    # Fit the model
-    model.fit(X_features, y_true)
+        # Define the model
+        model = XGBClassifier(**model_params)
 
-    joblib.dump(model, output_model_path)
+        # Fit the model
+        model.fit(X_features, y_true)
 
-    # Mlflow log model
-    mlflow.xgboost.log_model(
-        model, artifact_path="output_model_path", registered_model_name="my_baseline_xboost"
-    )
+        joblib.dump(model, output_model_path)
+
+        # Mlflow log model
+        mlflow.xgboost.log_model(
+            model, artifact_path="output_model_path", registered_model_name="my_baseline_xboost"
+        )
 
 
 if __name__ == "__main__":

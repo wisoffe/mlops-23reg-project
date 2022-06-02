@@ -1,8 +1,30 @@
 """Module for common project functions
 """
-
+import os
 import pandas as pd
 import numpy as np
+from dotenv import load_dotenv
+import mlflow
+
+
+def mlflow_set_tracking_config(experiment_name: str = "default") -> None:
+    """Настраивает трекинг экспериментов через MLFlow Tracking server.
+    Реализует сценарий 4. В файле .env должны быть следующие переменные:
+    MLFLOW_TRACKING_URI - URL трекинг сервера MLflow (например "http://localhost:5000")
+
+    MLFLOW_S3_ENDPOINT_URL* - URL до s3 хранилища (например "http://localhost:9000")
+    AWS_ACCESS_KEY_ID* - key ID к s3 хранилищу (с правами на запись)
+    AWS_SECRET_ACCESS_KEY* - secret key к s3 хранилищу
+    * используется библиотекой boto3
+
+
+    Args:
+        experiment_name (str, optional): Название серии экспериментов в MLflow.
+            Defaults to "default".
+    """
+    load_dotenv(override=True)
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+    mlflow.set_experiment(experiment_name)
 
 
 def jaccard(list_a: list, list_b: list) -> float:
