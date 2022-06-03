@@ -25,8 +25,8 @@ stages:
       md5: 50727d57cff70b4dd48a553e8c25de16
       size: 119179504
     - path: .\src\data\generate_pairs.py
-      md5: 1d492abaacda4e124634a937184895c1
-      size: 11482
+      md5: a97de8632ffb16743fc9274cb522bb9e
+      size: 11499
     outs:
     - path: .\data\interim\split_train_pairs.csv
       md5: 7a666084ec0c102d0eeab69136e971af
@@ -49,19 +49,42 @@ stages:
       md5: 6a16aca6154d57f160cfd261825b6354
       size: 60372091
   train_model:
-    cmd: python .\src\models\train_model.py .\models\model_on_split_df.pkl --pair_feautures_dataset_path
-      .\data\processed\split_train_pair_feautures.csv
+    cmd: python .\src\models\train_model.py .\data\processed\split_train_pair_feautures.csv
+      .\data\processed\split_test_pair_feautures.csv .\data\interim\split_test.csv
+      .\reports\metrics_of_split_test_pairs.json .\models\model_on_split_df.pkl .\data\processed\submission_pred_split.csv
+      .\reports\metrics_of_split_test_final.json
     deps:
+    - path: .\data\interim\split_test.csv
+      md5: 2dcffbecf1cfb1b5243579aa3dddf953
+      size: 59640605
+    - path: .\data\processed\split_test_pair_feautures.csv
+      md5: 6d3ffa87da90df8a62faec8a7125fa86
+      size: 18196482
     - path: .\data\processed\split_train_pair_feautures.csv
       md5: 6a16aca6154d57f160cfd261825b6354
       size: 60372091
+    - path: .\reports\metrics_of_split_test_pairs.json
+      md5: f1be44f87bed37a615fbb1abb21716dd
+      size: 35
+    - path: .\src\models\evaluate.py
+      md5: da8ac7a41ab5c31ee5ef2643ff14da69
+      size: 2776
+    - path: .\src\models\predict_model.py
+      md5: bde93fd3b45017cc4c9eada0bda651c8
+      size: 5166
     - path: .\src\models\train_model.py
-      md5: 858d2b1a2d68a25983fb689888872ce7
-      size: 3562
+      md5: 6cfefb44c14bd863a7a4aed352be45c6
+      size: 6500
     outs:
+    - path: .\data\processed\submission_pred_split.csv
+      md5: 1fe1454430e086b9d6ea1d3f88faff9c
+      size: 14217616
     - path: .\models\model_on_split_df.pkl
       md5: ec982c566414065ddec03ffe44c7a538
       size: 51208
+    - path: .\reports\metrics_of_split_test_final.json
+      md5: 35120f579369601b346d6ad0f69f9321
+      size: 37
   generate_pairs_test:
     cmd: python .\src\data\generate_pairs.py .\data\interim\split_test.csv .\data\interim\split_test_pairs.csv
       .\reports\metrics_of_split_test_pairs.json --get_metrics=true
@@ -70,8 +93,8 @@ stages:
       md5: 2dcffbecf1cfb1b5243579aa3dddf953
       size: 59640605
     - path: .\src\data\generate_pairs.py
-      md5: 1d492abaacda4e124634a937184895c1
-      size: 11482
+      md5: a97de8632ffb16743fc9274cb522bb9e
+      size: 11499
     outs:
     - path: .\data\interim\split_test_pairs.csv
       md5: a93351bec3bb318d14ac72c0c02e2be1

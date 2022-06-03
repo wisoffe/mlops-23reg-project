@@ -188,7 +188,6 @@ def generate_pairs_csv(
         real_test (bool, optional): Имеем мы дело с реальным test.csv датасетом, или каким-то
             другим (развернутое описание в функции generate_pairs_df). Defaults to False.
     """
-
     df_input = pd.read_csv(input_dataset_path)
     df_pairs, metrics_of_pairs = generate_pairs_df(
         df_input, PAIRS_DROP_ORDER_DUBLICATES, get_metrics=get_metrics, real_test=real_test

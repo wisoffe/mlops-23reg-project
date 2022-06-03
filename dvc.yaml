@@ -33,15 +33,6 @@ stages:
           cache: false
 
 
-  train_model:
-    cmd: python .\src\models\train_model.py .\models\model_on_split_df.pkl --pair_feautures_dataset_path .\data\processed\split_train_pair_feautures.csv
-    deps:
-      - .\data\processed\split_train_pair_feautures.csv
-      - .\src\models\train_model.py
-    outs:
-      - .\models\model_on_split_df.pkl
-
-
   generate_pairs_test:
     cmd: python .\src\data\generate_pairs.py .\data\interim\split_test.csv .\data\interim\split_test_pairs.csv .\reports\metrics_of_split_test_pairs.json --get_metrics=true
     deps:
@@ -65,25 +56,20 @@ stages:
           cache: false
 
 
-  predict_model:
-    cmd: python .\src\models\predict_model.py .\models\model_on_split_df.pkl .\data\interim\split_test.csv .\data\processed\submission_pred_split.csv 
-        --pair_feautures_dataset_path .\data\processed\split_test_pair_feautures.csv
+  train_model:
+    cmd: python .\src\models\train_model.py .\data\processed\split_train_pair_feautures.csv .\data\processed\split_test_pair_feautures.csv .\data\interim\split_test.csv .\reports\metrics_of_split_test_pairs.json .\models\model_on_split_df.pkl .\data\processed\submission_pred_split.csv .\reports\metrics_of_split_test_final.json
     deps:
-      - .\models\model_on_split_df.pkl
-      - .\data\interim\split_test.csv
-      - .\data\processed\split_test_pair_feautures.csv
+      - .\src\models\train_model.py
       - .\src\models\predict_model.py
+      - .\src\models\evaluate.py
+      - .\data\processed\split_train_pair_feautures.csv
+      - .\data\processed\split_test_pair_feautures.csv
+      - .\data\interim\split_test.csv
+      - .\reports\metrics_of_split_test_pairs.json
     outs:
+      - .\models\model_on_split_df.pkl
       - .\data\processed\submission_pred_split.csv:
           cache: false
-
-
-  evaluate:
-    cmd: python .\src\models\evaluate.py .\data\interim\split_test.csv .\data\processed\submission_pred_split.csv .\reports\metrics_of_split_test_final.json
-    deps:
-      - .\data\interim\split_test.csv
-      - .\data\processed\submission_pred_split.csv
-      - .\src\models\evaluate.py
     metrics:
       - .\reports\metrics_of_split_test_final.json:
           cache: false
