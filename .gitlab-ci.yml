@@ -19,6 +19,10 @@ variables:
 # If you want to also cache the installed packages, you have to install
 # them in a virtualenv and cache it as well.
 cache:
+# Используемое кеширование на основе ключей, одначает, что будет происходить проверка
+# неизменности заданных файлов-ключей, и если они не были изменены, то директории в paths
+# будут взяты из кэша (например если если poetry.lock остался прежним, то не нужно 
+# переустанавливать заново всю виртуальную среду)
   key:
     files:
       - poetry.lock
@@ -29,6 +33,7 @@ cache:
     - .venv
 
 before_script:
+# Важно понимать, что этот раздел выполняется не один раз, а перед каждым последующим стейджем (наподобии test_lint, если бы их было несколько)
   - python --version  # For debugging
   - python -m pip install --upgrade pip
   - pip install poetry
