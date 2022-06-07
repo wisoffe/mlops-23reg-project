@@ -1,5 +1,6 @@
 """Module for evaluate (get main metrics) of main model (trains on split df)"""
 
+from typing import Union
 import json
 import click
 import pandas as pd
@@ -7,19 +8,14 @@ from src.common_funcs import (
     get_submission_true,
     jaccard_score,
 )
-import mlflow
-
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
-mlflow.set_experiment("test_mlflow")
 
 
-@click.command()
-@click.argument("input_original_dataset_path", type=click.Path(exists=True))
-@click.argument("input_submission_pred_path", type=click.Path(exists=True))
-@click.argument("output_metrics_path", type=click.Path())
 def evaluate(
-    input_original_dataset_path: str, input_submission_pred_path: str, output_metrics_path: str
-) -> None:
+    input_original_dataset_path: str,
+    input_submission_pred_path: str,
+    output_metrics_path: str,
+    return_metrics=False,
+) -> Union[None, dict]:
     """Проводим финальную оценку (получение метрик) модели. Оценка возможна только в случае
     наличия у нас датасета с true метками (т.е. не подходит для реального test датасета).
 
@@ -47,8 +43,24 @@ def evaluate(
 
     print(metrics)
 
-    mlflow.log_metrics(metrics)
+    if return_metrics:  # pylint: disable=no-else-return
+        return metrics
+    else:
+        return None
+
+
+@click.command()
+@click.argument("input_original_dataset_path", type=click.Path(exists=True))
+@click.argument("input_submission_pred_path", type=click.Path(exists=True))
+@click.argument("output_metrics_path", type=click.Path())
+def evaluate_cli(
+    input_original_dataset_path: str,
+    input_submission_pred_path: str,
+    output_metrics_path: str,
+) -> None:
+    """Выполняет функционал evaluate(), но предназначена для запуска модуля из коммандной строки."""
+    evaluate(input_original_dataset_path, input_submission_pred_path, output_metrics_path)
 
 
 if __name__ == "__main__":
-    evaluate()  # pylint: disable=E1120
+    evaluate_cli()  # pylint: disable=E1120

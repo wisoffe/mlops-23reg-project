@@ -6,16 +6,18 @@ import json
 import pandas as pd
 import numpy as np
 import click
+import mlflow
 from src.common_funcs import (
     get_submission_true,
     get_submission_predict,
     jaccard_score,
     get_match_label,
 )
-import mlflow
+from src.common_funcs import mlflow_set_tracking_config
 
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
-mlflow.set_experiment("test_mlflow")
+
+mlflow_set_tracking_config("generate_pairs")
+
 
 # Hyperparameters
 PAIRS_DROP_ORDER_DUBLICATES = True
@@ -186,7 +188,6 @@ def generate_pairs_csv(
         real_test (bool, optional): Имеем мы дело с реальным test.csv датасетом, или каким-то
             другим (развернутое описание в функции generate_pairs_df). Defaults to False.
     """
-
     df_input = pd.read_csv(input_dataset_path)
     df_pairs, metrics_of_pairs = generate_pairs_df(
         df_input, PAIRS_DROP_ORDER_DUBLICATES, get_metrics=get_metrics, real_test=real_test

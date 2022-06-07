@@ -1,5 +1,5 @@
 [core]
-    remote = s3yandex
-['remote "s3yandex"']
-    url = s3://mlops23regs3yandex
-    endpointurl = https://storage.yandexcloud.net
+    remote = s3minio
+['remote "s3minio"']
+    url = s3://dvc
+    endpointurl = http://localhost:9000
