@@ -23,7 +23,7 @@ mlflow_set_tracking_config("general_model")
 @click.argument("output_model_path", type=click.Path())
 @click.argument("output_submission_path", type=click.Path())
 @click.argument("output_metrics_path", type=click.Path())
-def train_model(
+def train_model(  # pylint: disable=too-many-arguments,too-many-locals
     input_pair_features_train_dataset_path: str,
     input_pair_features_test_dataset_path: str,
     input_original_test_dataset_path: str,

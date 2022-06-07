@@ -1,6 +1,7 @@
 """Module for ML service on FastAPI"""
 
 import os
+import sys
 import pandas as pd
 import mlflow
 from dotenv import load_dotenv
@@ -15,7 +16,7 @@ app = FastAPI()
 
 
 # Create a class to store the deployed model & use it for prediction
-class Model:
+class Model:  # pylint: disable=too-few-public-methods
     """General model class for inference"""
 
     def __init__(self, model_name, model_stage):
@@ -56,7 +57,7 @@ async def create_upload_file(file: UploadFile = File(...)):
         _type_: Json of model prediction
     """
     # Handle the file only if it is a CSV
-    if file.filename.endswith(".csv"):
+    if file.filename.endswith(".csv"):  # pylint: disable=no-else-return
         # Create a temporary file with the same name as the uploaded
         # CSV file to load the data into a pandas Dataframe
         with open(file.filename, "wb") as input_file:
@@ -78,4 +79,4 @@ async def create_upload_file(file: UploadFile = File(...)):
 # Check if the environment variables for AWS access are available.
 # If not, exit the program
 if os.getenv("AWS_ACCESS_KEY_ID") is None or os.getenv("AWS_SECRET_ACCESS_KEY") is None:
-    exit(1)
+    sys.exit(1)

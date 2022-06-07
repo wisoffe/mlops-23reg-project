@@ -43,7 +43,7 @@ def evaluate(
 
     print(metrics)
 
-    if return_metrics:
+    if return_metrics:  # pylint: disable=no-else-return
         return metrics
     else:
         return None
