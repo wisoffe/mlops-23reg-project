@@ -40,16 +40,16 @@ before_script:
   - poetry config virtualenvs.in-project true
   - poetry install --no-root
 
-test_lint:
-  script:
-    - poetry run flake8 src
-    - poetry run mypy --ignore-missing-imports src
-    - poetry run bandit src
-    - poetry run pylint src
+# test_lint:
+#   script:
+#     - poetry run flake8 src
+#     - poetry run mypy --ignore-missing-imports src
+#     - poetry run bandit src
+#     - poetry run pylint src
 
 pytest:
  script:
-   - poetry run dvc remote modify --local s3minio access_key_id $AWS_ACCESS_KEY_ID
+   - poetry run dvc remote modify --local s3minio access_key_id sffwefwf
    - poetry run dvc remote modify --local s3minio secret_access_key $AWS_SECRET_ACCESS_KEY
    - poetry run dvc pull
    - poetry run dvc repro
