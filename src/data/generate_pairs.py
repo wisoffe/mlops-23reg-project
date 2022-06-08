@@ -6,22 +6,24 @@ import json
 import pandas as pd
 import numpy as np
 import click
-import mlflow
+
+# import mlflow
 from src.common_funcs import (
     get_submission_true,
     get_submission_predict,
     jaccard_score,
     get_match_label,
 )
-from src.common_funcs import mlflow_set_tracking_config
+
+# from src.common_funcs import mlflow_set_tracking_config
 
 
-mlflow_set_tracking_config("generate_pairs")
+# mlflow_set_tracking_config("generate_pairs")
 
 
 # Hyperparameters
 PAIRS_DROP_ORDER_DUBLICATES = True
-mlflow.log_param("PAIRS_DROP_ORDER_DUBLICATES", PAIRS_DROP_ORDER_DUBLICATES)
+# mlflow.log_param("PAIRS_DROP_ORDER_DUBLICATES", PAIRS_DROP_ORDER_DUBLICATES)
 
 
 def get_pairs_metrics(
@@ -122,7 +124,7 @@ def generate_pairs_df(
     # По сути это гиперпараметр, но не вынесен в таковые, т.к. это временное baseline решение
     # pylint: disable-next=invalid-name)
     FIRST_COORD_ROUND = 3  # (2) сотые ~= 1 км, (3) тысячные ~= 0.1 км
-    mlflow.log_param("FIRST_COORD_ROUND", FIRST_COORD_ROUND)
+    # mlflow.log_param("FIRST_COORD_ROUND", FIRST_COORD_ROUND)
 
     # task: Устранить SettingWithCopyWarning
 
@@ -200,7 +202,7 @@ def generate_pairs_csv(
             json.dump(metrics_of_pairs, metrics_file)
         print(metrics_of_pairs)
 
-        mlflow.log_metrics(metrics_of_pairs)
+        # mlflow.log_metrics(metrics_of_pairs)
 
 
 if __name__ == "__main__":
