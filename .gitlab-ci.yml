@@ -19,6 +19,10 @@ variables:
 # If you want to also cache the installed packages, you have to install
 # them in a virtualenv and cache it as well.
 cache:
+# Используемое кеширование на основе ключей, одначает, что будет происходить проверка
+# неизменности заданных файлов-ключей, и если они не были изменены, то директории в paths
+# будут взяты из кэша (например если если poetry.lock остался прежним, то не нужно 
+# переустанавливать заново всю виртуальную среду)
   key:
     files:
       - poetry.lock
@@ -29,11 +33,12 @@ cache:
     - .venv
 
 before_script:
+# Важно понимать, что этот раздел выполняется не один раз, а перед каждым последующим стейджем (наподобии test_lint, если бы их было несколько)
   - python --version  # For debugging
   - python -m pip install --upgrade pip
   - pip install poetry
   - poetry config virtualenvs.in-project true
-  - poetry install --no-root
+  - poetry install
 
 test_lint:
   script:
@@ -41,3 +46,12 @@ test_lint:
     - poetry run mypy --ignore-missing-imports src
     - poetry run bandit src
     - poetry run pylint src
+
+pytest:
+ script:
+   - poetry run dvc remote modify --local s3minio access_key_id $AWS_ACCESS_KEY_ID
+   - poetry run dvc remote modify --local s3minio secret_access_key $AWS_SECRET_ACCESS_KEY
+   - poetry run dvc pull
+   - poetry run dvc repro
+   - poetry run pytest --disable-warnings
+   
