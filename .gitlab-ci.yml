@@ -49,7 +49,7 @@ before_script:
 
 pytest:
  script:
-   - poetry run dvc remote modify --local s3minio access_key_id sffwefwf
+   - poetry run dvc remote modify --local s3minio access_key_id $AWS_ACCESS_KEY_ID
    - poetry run dvc remote modify --local s3minio secret_access_key $AWS_SECRET_ACCESS_KEY
    - poetry run dvc pull
    - poetry run dvc repro
