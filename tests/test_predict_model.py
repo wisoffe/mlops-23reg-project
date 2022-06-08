@@ -2,13 +2,13 @@
 from click.testing import CliRunner
 import pandas as pd
 import great_expectations as ge
-from src.models import predict_model
+from src.models.predict_model import predict_model_cli
 
 
-INPUT_MODEL_PATH = r".\models\model_on_split_df.pkl"
-INPUT_ORIGINAL_DATASET_PATH = r".\data\interim\split_test.csv"
-INPUT_PAIR_FEATURES_DATASET_PATH = r".\data\processed\split_test_pair_feautures.csv"
-OUTPUT_SUBMISSION_PATH = r".\data\processed\submission_pred_split.csv"
+INPUT_MODEL_PATH = "./models/model_on_split_df.pkl"
+INPUT_ORIGINAL_DATASET_PATH = "./data/interim/split_test.csv"
+INPUT_PAIR_FEATURES_DATASET_PATH = "./data/processed/split_test_pair_feautures.csv"
+OUTPUT_SUBMISSION_PATH = "./data/processed/submission_pred_split.csv"
 
 
 # Initialize runner
@@ -18,7 +18,7 @@ runner = CliRunner()
 def test_cli_command():
     """Test execute module from CLI"""
     result = runner.invoke(
-        predict_model,
+        predict_model_cli,
         "{} {} {} {}".format(  # pylint: disable=consider-using-f-string
             INPUT_MODEL_PATH,
             INPUT_ORIGINAL_DATASET_PATH,
