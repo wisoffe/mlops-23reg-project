@@ -40,12 +40,12 @@ before_script:
   - poetry config virtualenvs.in-project true
   - poetry install
 
-# test_lint:
-#   script:
-#     - poetry run flake8 src
-#     - poetry run mypy --ignore-missing-imports src
-#     - poetry run bandit src
-#     - poetry run pylint src
+test_lint:
+  script:
+    - poetry run flake8 src
+    - poetry run mypy --ignore-missing-imports src
+    - poetry run bandit src
+    - poetry run pylint src
 
 pytest:
  script:
