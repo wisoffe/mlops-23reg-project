@@ -68,7 +68,7 @@ job1:
   script:
   - echo "job1 of stage2 run!"
   - mkdir .cache/pip/
-  - ls
+  - ls .cache/pip/
   - echo "job1 of stage2 run!" >> .cache/pip/job1.txt
 
 job2:
@@ -76,7 +76,7 @@ job2:
   script:
   - echo "job2 of stage2 run!"
   - mkdir .cache/pip/
-  - ls
+  - ls .cache/pip/
   - echo "job2 of stage2 run!" >> .cache/pip/job2.txt
 
 job4:
@@ -84,14 +84,14 @@ job4:
   script:
   - echo "job4 of stage2 run!"
   - mkdir .cache/pip/
-  - ls
-  - echo "job4 of stage2 run!" >> job4.txt
+  - ls .cache/pip/
+  - echo "job4 of stage2 run!" >> .cache/pip/job4.txt
 
 job3:
   stage: stage1
   script:
   - echo "job3 of stage1 run!"
   - mkdir .cache/pip/
-  - ls
-  - echo "job3 of stage1 run!" >> job1.txt
+  - ls .cache/pip/
+  - echo "job3 of stage1 run!" >> .cache/pip/job3.txt
    
