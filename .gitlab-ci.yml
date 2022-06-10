@@ -102,16 +102,16 @@ docker_deploy:
   stage: deploy
   tags:
     - prod
-  only:
-    - main
+  # only:
+  #   - main
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    # Scripts for Windows runner
+    # Scripts for Windows runner:
     - docker rm $(docker stop $(docker ps -a -q --filter name=${CONTAINER_PREFIX}_*)); if (-not $?) {cd .}
     - docker volume rm $(docker volume ls -q --filter name=${CONTAINER_PREFIX}_*); if (-not $?) {cd .}  
-    # Scripts for linux runner
+    # Scripts for linux runner:
     # - docker stop $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
     # - docker rm $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
     # - docker volume rm $(docker volume ls | grep ${CONTAINER_PREFIX}_ | awk '{print $2}') || true
-    # Scripts for any runner
+    # Scripts for any runner:
     - docker-compose -p $CONTAINER_PREFIX -f docker-compose.dev.yaml up -d
