@@ -12,6 +12,8 @@ image: python:3.9
 # only cache local items.
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  DOCKER_REGISTRY: "registry.gitlab.com/mlops-23reg-team/mlops-23reg-project"
+  CONTAINER_PREFIX: "dev"
 
 # Pip's cache doesn't store the python packages
 # https://pip.pypa.io/en/stable/topics/caching/
@@ -35,23 +37,75 @@ cache:
 before_script:
 # Важно понимать, что этот раздел выполняется не один раз, а перед каждым последующим стейджем (наподобии test_lint, если бы их было несколько)
   - python --version  # For debugging
-  - python -m pip install --upgrade pip
-  - pip install poetry
-  - poetry config virtualenvs.in-project true
-  - poetry install
+
+stages:
+  - tests
+  - build
+  - deploy
+
 
 test_lint:
+  stage: tests
+  tags:
+    - mlops
   script:
+    # preparing python virtual environment
+    - python -m pip install --upgrade pip
+    - pip install poetry
+    - poetry config virtualenvs.in-project true
+    - poetry install
+    # job scripts
     - poetry run flake8 src
     - poetry run mypy --ignore-missing-imports src
     - poetry run bandit src
     - poetry run pylint src
 
 pytest:
- script:
+  stage: tests
+  tags:
+    - mlops
+  script:
+   # preparing python virtual environment
+   - python -m pip install --upgrade pip
+   - pip install poetry
+   - poetry config virtualenvs.in-project true
+   - poetry install
+   # job scripts
    - poetry run dvc remote modify --local s3minio access_key_id $AWS_ACCESS_KEY_ID
    - poetry run dvc remote modify --local s3minio secret_access_key $AWS_SECRET_ACCESS_KEY
    - poetry run dvc pull
    - poetry run dvc repro
    - poetry run pytest --disable-warnings
-   
+
+
+docker_build:
+  stage: build
+  tags:
+    - mlops
+  only:
+    - main
+  script:
+    - echo $CI_COMMIT_SHA
+    - echo "AWS_ACCESS_KEY_ID = $AWS_ACCESS_KEY_ID" >> Docker/ml_service/.env
+    - echo "AWS_SECRET_ACCESS_KEY = $AWS_SECRET_ACCESS_KEY" >> Docker/ml_service/.env
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f Docker/ml_service/Dockerfile -t $DOCKER_REGISTRY/dev/app:$CI_COMMIT_SHA .
+    - docker push "$DOCKER_REGISTRY/dev/app:$CI_COMMIT_SHA"
+
+docker_deploy:
+  stage: deploy
+  tags:
+    - prod
+  only:
+    - main
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    # Scripts for Windows runner
+    - docker rm $(docker stop $(docker ps -a -q --filter name=${CONTAINER_PREFIX}_*)); if (-not $?) {cd .}
+    - docker volume rm $(docker volume ls -q --filter name=${CONTAINER_PREFIX}_*); if (-not $?) {cd .}  
+    # Scripts for linux runner
+    # - docker stop $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
+    # - docker rm $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
+    # - docker volume rm $(docker volume ls | grep ${CONTAINER_PREFIX}_ | awk '{print $2}') || true
+    # Scripts for any runner
+    - docker-compose -p $CONTAINER_PREFIX -f docker-compose.dev.yaml up -d
