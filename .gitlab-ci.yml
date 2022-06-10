@@ -39,31 +39,35 @@ before_script:
   - python --version  # For debugging
 
 stages:
-  - tests
+  # - tests
   - build
-  - deploy
+  # - deploy
 
 
-test_lint:
-  stage: tests
-  tags:
-    - mlops
-  script:
-    # preparing python virtual environment
-    - python -m pip install --upgrade pip
-    - pip install poetry
-    - poetry config virtualenvs.in-project true
-    - poetry install
-    # job scripts
-    - poetry run flake8 src
-    - poetry run mypy --ignore-missing-imports src
-    - poetry run bandit src
-    - poetry run pylint src
+# test_lint:
+#   stage: tests
+#   tags:
+#     - mlops
+#   except:
+#     - main
+#   script:
+#     # preparing python virtual environment
+#     - python -m pip install --upgrade pip
+#     - pip install poetry
+#     - poetry config virtualenvs.in-project true
+#     - poetry install
+#     # job scripts
+#     - poetry run flake8 src
+#     - poetry run mypy --ignore-missing-imports src
+#     - poetry run bandit src
+#     - poetry run pylint src
 
 # pytest:
 #   stage: tests
 #   tags:
 #     - mlops
+#   except:
+#     - main
 #   script:
 #    # preparing python virtual environment
 #    - python -m pip install --upgrade pip
@@ -82,8 +86,8 @@ docker_build:
   stage: build
   tags:
     - mlops
-  only:
-    - main
+  # only:
+  #   - main
   script:
     - echo $CI_COMMIT_SHA
     - echo "AWS_ACCESS_KEY_ID = $AWS_ACCESS_KEY_ID" >> Docker/ml_service/.env
@@ -92,20 +96,20 @@ docker_build:
     - docker build -f Docker/ml_service/Dockerfile -t $DOCKER_REGISTRY/dev/app:$CI_COMMIT_SHA .
     - docker push $DOCKER_REGISTRY/dev/app:$CI_COMMIT_SHA
 
-docker_deploy:
-  stage: deploy
-  tags:
-    - prod
-  only:
-    - main
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    # Scripts for Windows runner
-    - docker rm $(docker stop $(docker ps -a -q --filter name=${CONTAINER_PREFIX}_*)); if (-not $?) {cd .}
-    - docker volume rm $(docker volume ls -q --filter name=${CONTAINER_PREFIX}_*); if (-not $?) {cd .}  
-    # Scripts for linux runner
-    # - docker stop $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
-    # - docker rm $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
-    # - docker volume rm $(docker volume ls | grep ${CONTAINER_PREFIX}_ | awk '{print $2}') || true
-    # Scripts for any runner
-    - docker-compose -p $CONTAINER_PREFIX -f docker-compose.dev.yaml up -d
+# docker_deploy:
+#   stage: deploy
+#   tags:
+#     - prod
+#   only:
+#     - main
+#   script:
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#     # Scripts for Windows runner
+#     - docker rm $(docker stop $(docker ps -a -q --filter name=${CONTAINER_PREFIX}_*)); if (-not $?) {cd .}
+#     - docker volume rm $(docker volume ls -q --filter name=${CONTAINER_PREFIX}_*); if (-not $?) {cd .}  
+#     # Scripts for linux runner
+#     # - docker stop $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
+#     # - docker rm $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
+#     # - docker volume rm $(docker volume ls | grep ${CONTAINER_PREFIX}_ | awk '{print $2}') || true
+#     # Scripts for any runner
+#     - docker-compose -p $CONTAINER_PREFIX -f docker-compose.dev.yaml up -d
