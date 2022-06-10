@@ -3,6 +3,7 @@ version: '3.8'
 services:
 
   app:
+    restart: always
     image: $DOCKER_REGISTRY/dev/app:$CI_COMMIT_SHA
     container_name: dev_ml_service
     ports:
