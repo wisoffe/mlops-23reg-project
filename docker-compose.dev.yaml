@@ -6,10 +6,8 @@ services:
     restart: always
     image: $DOCKER_REGISTRY/dev/app:$CI_COMMIT_SHA
     container_name: dev_ml_service
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     ports:
       - "8004:80"
     environment:
-      - MLFLOW_TRACKING_URI=http://host.docker.internal:5000
-      - MLFLOW_S3_ENDPOINT_URL=http://host.docker.internal:9000
+      - MLFLOW_TRACKING_URI=http://$HOST_MACHINE_IP:5000
+      - MLFLOW_S3_ENDPOINT_URL=http://$HOST_MACHINE_IP:9000
