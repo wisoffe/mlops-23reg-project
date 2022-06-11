@@ -109,9 +109,6 @@ docker_deploy:
     # Scripts for Windows runner:
     - docker rm $(docker stop $(docker ps -a -q --filter name=${CONTAINER_PREFIX}_*)); if (-not $?) {cd .}
     - docker volume rm $(docker volume ls -q --filter name=${CONTAINER_PREFIX}_*); if (-not $?) {cd .} 
-    - $env:HOST_MACHINE_IP
-    - $env:HOST_MACHINE_IP = $(wsl hostname -I)
-    - $env:HOST_MACHINE_IP
     # Scripts for linux runner:
     # - docker stop $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
     # - docker rm $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
