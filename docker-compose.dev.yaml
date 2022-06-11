@@ -6,6 +6,8 @@ services:
     restart: always
     image: $DOCKER_REGISTRY/dev/app:$CI_COMMIT_SHA
     container_name: dev_ml_service
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "8004:80"
     environment:
