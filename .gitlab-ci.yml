@@ -28,7 +28,7 @@ cache:
   key:
     files:
       - poetry.lock
-      # - .gitlab-ci.yml
+      - .gitlab-ci.yml
     prefix: ${CI_JOB_NAME}
   paths:
     - .cache/pip
@@ -48,6 +48,8 @@ test_lint:
   stage: tests
   tags:
     - mlops
+  except:
+    - main
   script:
     # preparing python virtual environment
     - python -m pip install --upgrade pip
@@ -60,22 +62,24 @@ test_lint:
     - poetry run bandit src
     - poetry run pylint src
 
-# pytest:
-#   stage: tests
-#   tags:
-#     - mlops
-#   script:
-#    # preparing python virtual environment
-#    - python -m pip install --upgrade pip
-#    - pip install poetry
-#    - poetry config virtualenvs.in-project true
-#    - poetry install
-#    # job scripts
-#    - poetry run dvc remote modify --local s3minio access_key_id $AWS_ACCESS_KEY_ID
-#    - poetry run dvc remote modify --local s3minio secret_access_key $AWS_SECRET_ACCESS_KEY
-#    - poetry run dvc pull
-#    - poetry run dvc repro
-#    - poetry run pytest --disable-warnings
+pytest:
+  stage: tests
+  tags:
+    - mlops
+  except:
+    - main
+  script:
+   # preparing python virtual environment
+   - python -m pip install --upgrade pip
+   - pip install poetry
+   - poetry config virtualenvs.in-project true
+   - poetry install
+   # job scripts
+   - poetry run dvc remote modify --local s3minio access_key_id $AWS_ACCESS_KEY_ID
+   - poetry run dvc remote modify --local s3minio secret_access_key $AWS_SECRET_ACCESS_KEY
+   - poetry run dvc pull
+   - poetry run dvc repro
+   - poetry run pytest --disable-warnings
 
 
 docker_build:
@@ -86,8 +90,10 @@ docker_build:
     - main
   script:
     - echo $CI_COMMIT_SHA
+    - echo "# For UTF8 with BOM read" >> Docker/ml_service/.env
     - echo "AWS_ACCESS_KEY_ID = $AWS_ACCESS_KEY_ID" >> Docker/ml_service/.env
     - echo "AWS_SECRET_ACCESS_KEY = $AWS_SECRET_ACCESS_KEY" >> Docker/ml_service/.env
+    - (Get-Content -path Docker/ml_service/.env) | Set-Content -Encoding UTF8 -Path Docker/ml_service/.env
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -f Docker/ml_service/Dockerfile -t $DOCKER_REGISTRY/dev/app:$CI_COMMIT_SHA .
     - docker push $DOCKER_REGISTRY/dev/app:$CI_COMMIT_SHA
@@ -100,12 +106,12 @@ docker_deploy:
     - main
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    # Scripts for Windows runner
+    # Scripts for Windows runner:
     - docker rm $(docker stop $(docker ps -a -q --filter name=${CONTAINER_PREFIX}_*)); if (-not $?) {cd .}
     - docker volume rm $(docker volume ls -q --filter name=${CONTAINER_PREFIX}_*); if (-not $?) {cd .}  
-    # Scripts for linux runner
+    # Scripts for linux runner:
     # - docker stop $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
     # - docker rm $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
     # - docker volume rm $(docker volume ls | grep ${CONTAINER_PREFIX}_ | awk '{print $2}') || true
-    # Scripts for any runner
+    # Scripts for any runner:
     - docker-compose -p $CONTAINER_PREFIX -f docker-compose.dev.yaml up -d
