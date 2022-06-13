@@ -90,10 +90,14 @@ docker_build:
     - main
   script:
     - echo $CI_COMMIT_SHA
+    - git checkout pv_$APP_PIPELINE_VERSION
+    # Generate app .env
     - echo "# For UTF8 with BOM read" >> Docker/ml_service/.env
+    - echo "APP_PIPELINE_VERSION = $APP_PIPELINE_VERSION" >> Docker/ml_service/.env
     - echo "AWS_ACCESS_KEY_ID = $AWS_ACCESS_KEY_ID" >> Docker/ml_service/.env
     - echo "AWS_SECRET_ACCESS_KEY = $AWS_SECRET_ACCESS_KEY" >> Docker/ml_service/.env
     - (Get-Content -path Docker/ml_service/.env) | Set-Content -Encoding UTF8 -Path Docker/ml_service/.env
+    # Docker build
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -f Docker/ml_service/Dockerfile -t $DOCKER_REGISTRY/dev/app:$CI_COMMIT_SHA .
     - docker push $DOCKER_REGISTRY/dev/app:$CI_COMMIT_SHA

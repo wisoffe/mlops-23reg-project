@@ -1,13 +1,16 @@
 """Module for common project functions
 """
 import os
+import pkg_resources
 import pandas as pd
 import numpy as np
 from dotenv import load_dotenv
 import mlflow
 
 
-def mlflow_set_tracking_config(experiment_name: str = "default") -> None:
+def mlflow_set_tracking_config(
+    experiment_name: str = "default", project_name="mlops23regproject"
+) -> None:
     """Настраивает трекинг экспериментов через MLFlow Tracking server.
     Реализует сценарий 4. В файле .env должны быть следующие переменные:
     MLFLOW_TRACKING_URI - URL трекинг сервера MLflow (например "http://localhost:5000")
@@ -21,11 +24,13 @@ def mlflow_set_tracking_config(experiment_name: str = "default") -> None:
     Args:
         experiment_name (str, optional): Название серии экспериментов в MLflow.
             Defaults to "default".
+        project_name (str, optional): Название текущего проекта, обычно соответствует
+            [tool.poetry].name из pyproject.toml. Defaults to "mlops23regproject".
     """
     load_dotenv(override=True)
     mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
-    pipline_ver = os.getenv("CURRENT_PIPELINE_VERSION")
-    mlflow.set_experiment(f"{experiment_name}__pv_{pipline_ver}")
+    project_ver = pkg_resources.get_distribution(project_name).version
+    mlflow.set_experiment(f"{experiment_name}_v{project_ver}")
 
 
 def jaccard(list_a: list, list_b: list) -> float:

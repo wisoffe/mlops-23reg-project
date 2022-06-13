@@ -3,6 +3,7 @@
 import os
 import sys
 import warnings
+import pkg_resources
 import pandas as pd
 import mlflow
 from dotenv import load_dotenv
@@ -59,12 +60,12 @@ class Model:  # pylint: disable=too-few-public-methods
 global_inference_params = {"drop_order_dub": PAIRS_DROP_ORDER_DUBLICATES}
 
 # Create model
-if "APP_PIPELINE_VERSION" in os.environ:
-    pipline_ver = os.getenv("APP_PIPELINE_VERSION")
+if "APP_PROJECT_VERSION" in os.environ:
+    project_ver = os.getenv("APP_PROJECT_VERSION")
 else:
-    pipline_ver = os.getenv("CURRENT_PIPELINE_VERSION")
+    project_ver = pkg_resources.get_distribution("mlops23regproject").version
 
-model = Model(f"general_xboost__pv_{pipline_ver}", "Staging", global_inference_params)
+model = Model(f"general_model_v{project_ver}", "Staging", global_inference_params)
 
 
 # Create the POST endpoint with path '/invocations'
