@@ -1,10 +1,13 @@
 """Module for predict of main model"""
 
+import warnings
 import pandas as pd
 import click
 import joblib
 from src.common_funcs import get_submission_predict
 from src.data.generate_pairs import PAIRS_DROP_ORDER_DUBLICATES
+
+warnings.filterwarnings("ignore")
 
 
 def predict_model_in_memory(

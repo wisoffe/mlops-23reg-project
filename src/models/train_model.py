@@ -1,16 +1,20 @@
 """Module for train main model"""
 
+import os
 import json
+import warnings
 import pandas as pd
 import click
 from xgboost import XGBClassifier
 import joblib
 import mlflow
+from dotenv import load_dotenv
 from mlflow.models.signature import infer_signature
 from src.models.predict_model import predict_model
 from src.models.evaluate import evaluate
 from src.common_funcs import mlflow_set_tracking_config
 
+warnings.filterwarnings("ignore")
 
 mlflow_set_tracking_config("general_model")
 
@@ -93,11 +97,13 @@ def train_model(  # pylint: disable=too-many-arguments,too-many-locals
     # Mlflow tracking model and model params
     mlflow.log_params(model_params)
 
+    load_dotenv(override=True)
+    pipline_ver = os.getenv("PIPELINE_VERSION")
     signature = infer_signature(X_features, y_pred)  # inputs, outputs
     mlflow.xgboost.log_model(
         model,
         artifact_path="output_model_path",
-        registered_model_name="general_model_xboost",
+        registered_model_name=f"general_xboost__pv_{pipline_ver}",
         signature=signature,
     )
 

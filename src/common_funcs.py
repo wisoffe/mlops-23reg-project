@@ -24,7 +24,8 @@ def mlflow_set_tracking_config(experiment_name: str = "default") -> None:
     """
     load_dotenv(override=True)
     mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
-    mlflow.set_experiment(experiment_name)
+    pipline_ver = os.getenv("PIPELINE_VERSION")
+    mlflow.set_experiment(f"{experiment_name}__pv_{pipline_ver}")
 
 
 def jaccard(list_a: list, list_b: list) -> float:

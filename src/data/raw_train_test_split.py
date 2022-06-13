@@ -1,10 +1,12 @@
 """Module for split raw test to train/test"""
 
-
+import warnings
 from typing import Tuple
 from sklearn.model_selection import GroupKFold
 import click
 import pandas as pd
+
+warnings.filterwarnings("ignore")
 
 
 def train_test_group_split_df(

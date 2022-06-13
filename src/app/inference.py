@@ -2,6 +2,7 @@
 
 import os
 import sys
+import warnings
 import pandas as pd
 import mlflow
 from dotenv import load_dotenv
@@ -10,6 +11,8 @@ from fastapi.responses import FileResponse
 from src.data.generate_pairs import generate_pairs_df
 from src.features.build_pair_features import build_pair_feautures_df
 from src.models.predict_model import predict_model_in_memory, PAIRS_DROP_ORDER_DUBLICATES
+
+warnings.filterwarnings("ignore")
 
 # Load the environment variables from the .env file into the application
 load_dotenv(override=True)
@@ -56,7 +59,8 @@ class Model:  # pylint: disable=too-few-public-methods
 global_inference_params = {"drop_order_dub": PAIRS_DROP_ORDER_DUBLICATES}
 
 # Create model
-model = Model("general_model_xboost", "Staging", global_inference_params)
+pipline_ver = os.getenv("PIPELINE_VERSION")
+model = Model(f"general_xboost__pv_{pipline_ver}", "Staging", global_inference_params)
 
 
 # Create the POST endpoint with path '/invocations'
