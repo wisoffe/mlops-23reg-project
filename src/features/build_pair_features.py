@@ -1,12 +1,14 @@
 """Module for build features"""
 
-
+import warnings
 import pandas as pd
 import haversine as hs
 import click
 from haversine import Unit
 from fuzzywuzzy import fuzz
 from src.common_funcs import get_match_label
+
+warnings.filterwarnings("ignore")
 
 
 def run_futures_pipeline(

@@ -1,6 +1,8 @@
 """Module for train main model"""
 
 import json
+import warnings
+import pkg_resources
 import pandas as pd
 import click
 from xgboost import XGBClassifier
@@ -11,8 +13,9 @@ from src.models.predict_model import predict_model
 from src.models.evaluate import evaluate
 from src.common_funcs import mlflow_set_tracking_config
 
+warnings.filterwarnings("ignore")
 
-mlflow_set_tracking_config("general_model")
+mlflow_set_tracking_config("mlops23regproject")
 
 
 @click.command()
@@ -93,11 +96,12 @@ def train_model(  # pylint: disable=too-many-arguments,too-many-locals
     # Mlflow tracking model and model params
     mlflow.log_params(model_params)
 
+    project_ver = pkg_resources.get_distribution("mlops23regproject").version
     signature = infer_signature(X_features, y_pred)  # inputs, outputs
     mlflow.xgboost.log_model(
         model,
         artifact_path="output_model_path",
-        registered_model_name="general_model_xboost",
+        registered_model_name=f"general_model_v{project_ver}",
         signature=signature,
     )
 

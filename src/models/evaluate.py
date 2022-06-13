@@ -1,5 +1,6 @@
 """Module for evaluate (get main metrics) of main model (trains on split df)"""
 
+import warnings
 from typing import Union
 import json
 import click
@@ -8,6 +9,8 @@ from src.common_funcs import (
     get_submission_true,
     jaccard_score,
 )
+
+warnings.filterwarnings("ignore")
 
 
 def evaluate(

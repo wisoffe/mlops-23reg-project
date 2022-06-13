@@ -1,6 +1,6 @@
 """Module for generate pairs candidate to match"""
 
-
+import warnings
 from typing import Tuple
 import json
 import pandas as pd
@@ -14,6 +14,8 @@ from src.common_funcs import (
     jaccard_score,
     get_match_label,
 )
+
+warnings.filterwarnings("ignore")
 
 # from src.common_funcs import mlflow_set_tracking_config
 
