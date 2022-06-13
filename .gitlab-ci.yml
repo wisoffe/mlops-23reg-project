@@ -90,7 +90,7 @@ docker_build:
     - main
   script:
     - echo $CI_COMMIT_SHA
-    - git checkout pv_$APP_PIPELINE_VERSION
+    - git checkout v$APP_PROJECT_VERSION
     # Generate app .env
     - echo "# For UTF8 with BOM read" >> Docker/ml_service/.env
     - echo "APP_PIPELINE_VERSION = $APP_PIPELINE_VERSION" >> Docker/ml_service/.env
