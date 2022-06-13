@@ -59,7 +59,11 @@ class Model:  # pylint: disable=too-few-public-methods
 global_inference_params = {"drop_order_dub": PAIRS_DROP_ORDER_DUBLICATES}
 
 # Create model
-pipline_ver = os.getenv("PIPELINE_VERSION")
+if "APP_PIPELINE_VERSION" in os.environ:
+    pipline_ver = os.getenv("APP_PIPELINE_VERSION")
+else:
+    pipline_ver = os.getenv("CURRENT_PIPELINE_VERSION")
+
 model = Model(f"general_xboost__pv_{pipline_ver}", "Staging", global_inference_params)
 
 

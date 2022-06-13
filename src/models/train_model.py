@@ -98,7 +98,7 @@ def train_model(  # pylint: disable=too-many-arguments,too-many-locals
     mlflow.log_params(model_params)
 
     load_dotenv(override=True)
-    pipline_ver = os.getenv("PIPELINE_VERSION")
+    pipline_ver = os.getenv("CURRENT_PIPELINE_VERSION")
     signature = infer_signature(X_features, y_pred)  # inputs, outputs
     mlflow.xgboost.log_model(
         model,
