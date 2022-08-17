@@ -25,7 +25,7 @@
 	- Docker Desktop (в виде бэкенда WSL2)
 - git clone https://gitlab.com/mlops-23reg-team/mlops-23reg-project.git
 - все нижеуказанные команды выполняем находясь в корневой директории проекта
-- создаем в корне проекта файл mlops-23reg-team следующего содержания:
+- создаем в корне проекта файл .env следующего содержания:
 ```
 MINIO_ROOT_USER = admin
 MINIO_ROOT_PASSWORD = miniotestpass
